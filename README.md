@@ -1,3 +1,13 @@
+---
+title: Enterprise Email Assistant
+emoji: 📧
+colorFrom: purple
+colorTo: indigo
+sdk: docker
+pinned: false
+license: mit
+---
+
 # Enterprise Email Assistant
 
 AI-powered email composition, analysis, and optimization using Hugging Face models. No API key required - uses free Hugging Face inference.
