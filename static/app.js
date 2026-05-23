@@ -162,3 +162,68 @@ async function improveTone() {
     
     document.getElementById('improve-result').value = result.improved;
 }
+
+// Research Lead
+async function researchLead() {
+    const company = document.getElementById('research-company').value;
+    const industry = document.getElementById('research-industry').value;
+    const role = document.getElementById('research-role').value;
+    const painPoints = document.getElementById('research-pain').value;
+    
+    if (!company || !industry) {
+        alert('Please provide company and industry.');
+        return;
+    }
+    
+    const result = await callAPI('/api/research-lead', {
+        company,
+        industry,
+        role,
+        pain_points: painPoints
+    });
+    
+    document.getElementById('research-result').value = result.email;
+}
+
+// Batch Outreach
+async function batchOutreach() {
+    const template = document.getElementById('batch-template').value;
+    const leadsText = document.getElementById('batch-leads').value;
+    
+    if (!leadsText) {
+        alert('Please provide leads in JSON format.');
+        return;
+    }
+    
+    try {
+        const leads = JSON.parse(leadsText);
+        const result = await callAPI('/api/batch-outreach', {
+            leads,
+            template
+        });
+        
+        const output = result.emails.map(e => 
+            `Lead: ${e.lead.name} at ${e.lead.company}\nEmail: ${e.email}\n---`
+        ).join('\n\n');
+        
+        document.getElementById('batch-result').value = output;
+    } catch (error) {
+        alert('Invalid JSON format for leads.');
+    }
+}
+
+// Analyze Lead
+async function analyzeLead() {
+    const leadInfo = document.getElementById('analyze-info').value;
+    
+    if (!leadInfo) {
+        alert('Please provide lead information.');
+        return;
+    }
+    
+    const result = await callAPI('/api/analyze-lead', {
+        lead_info: leadInfo
+    });
+    
+    document.getElementById('analyze-result').value = result.analysis;
+}

@@ -233,6 +233,76 @@ def improve_tone():
     except Exception as e:
         return jsonify({'error': f"Error: {str(e)}"}), 500
 
+@app.route('/api/research-lead', methods=['POST'])
+def research_lead():
+    """Research a lead and generate outreach email."""
+    data = request.json
+    company = data.get('company', '')
+    industry = data.get('industry', '')
+    role = data.get('role', '')
+    pain_points = data.get('pain_points', '')
+    
+    if not company or not industry:
+        return jsonify({'error': 'Please provide company and industry.'}), 400
+    
+    prompt = f"Research {company} in {industry} industry. Target role: {role}. Pain points: {pain_points}. Generate personalized outreach email with:\n1. Personalized opening\n2. Value proposition\n3. Call to action\n\nEmail:"
+    
+    try:
+        result = composer(prompt, max_length=500, num_return_sequences=1, temperature=0.7)
+        email = result[0]['generated_text'].split("Email:")[-1].strip()
+        return jsonify({'email': email if email else "Could not generate outreach email."})
+    except Exception as e:
+        return jsonify({'error': f"Error: {str(e)}"}), 500
+
+@app.route('/api/batch-outreach', methods=['POST'])
+def batch_outreach():
+    """Generate outreach emails for multiple leads."""
+    data = request.json
+    leads = data.get('leads', [])
+    template = data.get('template', '')
+    
+    if not leads:
+        return jsonify({'error': 'Please provide leads list.'}), 400
+    
+    emails = []
+    for lead in leads:
+        company = lead.get('company', '')
+        name = lead.get('name', '')
+        prompt = f"Generate outreach email to {name} at {company}. Template: {template}\n\nEmail:"
+        
+        try:
+            result = composer(prompt, max_length=400, num_return_sequences=1, temperature=0.7)
+            email = result[0]['generated_text'].split("Email:")[-1].strip()
+            emails.append({
+                'lead': lead,
+                'email': email if email else "Could not generate email"
+            })
+        except Exception as e:
+            emails.append({
+                'lead': lead,
+                'email': f"Error: {str(e)}"
+            })
+    
+    return jsonify({'emails': emails})
+
+@app.route('/api/analyze-lead', methods=['POST'])
+def analyze_lead():
+    """Analyze lead information for outreach strategy."""
+    data = request.json
+    lead_info = data.get('lead_info', '')
+    
+    if not lead_info:
+        return jsonify({'error': 'Please provide lead information.'}), 400
+    
+    prompt = f"Analyze this lead for outreach strategy: {lead_info}\n\nProvide:\n1. Best contact approach\n2. Key talking points\n3. Potential objections\n4. Recommended follow-up timing\n\nAnalysis:"
+    
+    try:
+        result = composer(prompt, max_length=400, num_return_sequences=1, temperature=0.6)
+        analysis = result[0]['generated_text'].split("Analysis:")[-1].strip()
+        return jsonify({'analysis': analysis if analysis else "Could not generate analysis."})
+    except Exception as e:
+        return jsonify({'error': f"Error: {str(e)}"}), 500
+
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 7860))
     app.run(host='0.0.0.0', port=port, debug=False)
