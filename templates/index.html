@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Email Assistant</title>
+    <title>LLM Dashboard - 9 AI Tools</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>📧 Enterprise Email Assistant</h1>
-            <p>AI-powered email composition, analysis, and optimization using Hugging Face models</p>
+            <h1>🤖 LLM Dashboard</h1>
+            <p>9 AI-Powered Tools for Productivity & Business</p>
             <div class="auth-section">
                 <span class="status-indicator {% if authenticated %}authenticated{% endif %}"></span>
-                <span id="auth-status">{% if authenticated %}Authenticated with Gmail{% else %}Not authenticated{% endif %}</span>
+                <span id="auth-status">{% if authenticated %}Authenticated{% else %}Not authenticated{% endif %}</span>
                 {% if not authenticated %}
                 <button class="auth-btn" onclick="loginWithGoogle()">Login with Google</button>
                 {% else %}
@@ -22,229 +22,63 @@
             </div>
         </header>
 
-        <nav class="tabs">
-            <button class="tab-btn active" data-tab="compose">✍️ Compose Email</button>
-            <button class="tab-btn" data-tab="sentiment">😊 Sentiment Analysis</button>
-            <button class="tab-btn" data-tab="summarize">📝 Summarize Email</button>
-            <button class="tab-btn" data-tab="abtest">🧪 A/B Testing</button>
-            <button class="tab-btn" data-tab="improve">🎯 Improve Tone</button>
-            <button class="tab-btn" data-tab="research">🔍 Research Lead</button>
-            <button class="tab-btn" data-tab="batch">📬 Batch Outreach</button>
-            <button class="tab-btn" data-tab="analyze">📊 Analyze Lead</button>
-            <button class="tab-btn" data-tab="appraise">💎 Appraise Repo</button>
-        </nav>
+        <div class="dashboard-grid">
+            <div class="card" onclick="openTool('compose')">
+                <div class="card-icon">✍️</div>
+                <h3>Email Composition</h3>
+                <p>Generate professional emails with AI</p>
+            </div>
+            <div class="card" onclick="openTool('sentiment')">
+                <div class="card-icon">😊</div>
+                <h3>Sentiment Analysis</h3>
+                <p>Analyze emotional tone of text</p>
+            </div>
+            <div class="card" onclick="openTool('summarize')">
+                <div class="card-icon">📝</div>
+                <h3>Text Summarization</h3>
+                <p>Condense long content</p>
+            </div>
+            <div class="card" onclick="openTool('abtest')">
+                <div class="card-icon">🧪</div>
+                <h3>A/B Testing</h3>
+                <p>Generate test variants</p>
+            </div>
+            <div class="card" onclick="openTool('improve')">
+                <div class="card-icon">🎯</div>
+                <h3>Tone Improvement</h3>
+                <p>Rewrite with different tones</p>
+            </div>
+            <div class="card" onclick="openTool('research')">
+                <div class="card-icon">🔍</div>
+                <h3>Lead Research</h3>
+                <p>Research & generate outreach</p>
+            </div>
+            <div class="card" onclick="openTool('batch')">
+                <div class="card-icon">📬</div>
+                <h3>Batch Outreach</h3>
+                <p>Process multiple leads</p>
+            </div>
+            <div class="card" onclick="openTool('analyze')">
+                <div class="card-icon">📊</div>
+                <h3>Lead Analysis</h3>
+                <p>Analyze outreach strategy</p>
+            </div>
+            <div class="card" onclick="openTool('appraise')">
+                <div class="card-icon">💎</div>
+                <h3>Repo Appraisal</h3>
+                <p>Evaluate GitHub repositories</p>
+            </div>
+            <div class="card" onclick="openTool('terminal')">
+                <div class="card-icon">💻</div>
+                <h3>Bash Terminal</h3>
+                <p>Real shell execution & deployment</p>
+            </div>
+        </div>
 
-        <main>
-            <!-- Compose Email Tab -->
-            <section id="compose" class="tab-content active">
-                <h2>Generate professional emails using AI</h2>
-                <div class="form-group">
-                    <label>Email Topic/Subject</label>
-                    <input type="text" id="compose-topic" placeholder="e.g., Project Update Q3">
-                </div>
-                <div class="form-group">
-                    <label>Recipient</label>
-                    <input type="text" id="compose-recipient" placeholder="e.g., John Smith">
-                </div>
-                <div class="form-group">
-                    <label>Tone</label>
-                    <select id="compose-tone">
-                        <option value="Professional">Professional</option>
-                        <option value="Friendly">Friendly</option>
-                        <option value="Formal">Formal</option>
-                        <option value="Casual">Casual</option>
-                        <option value="Persuasive">Persuasive</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Key Points (comma separated)</label>
-                    <textarea id="compose-keypoints" rows="3" placeholder="e.g., Project completed on time, under budget, ready for review"></textarea>
-                </div>
-                <button class="btn btn-primary" onclick="composeEmail()">Generate Email</button>
-                <div class="form-group">
-                    <label>Generated Email</label>
-                    <textarea id="compose-result" rows="10" readonly></textarea>
-                </div>
-            </section>
-
-            <!-- Sentiment Analysis Tab -->
-            <section id="sentiment" class="tab-content">
-                <h2>Analyze the emotional tone of your emails</h2>
-                <div class="form-group">
-                    <label>Email Text</label>
-                    <textarea id="sentiment-text" rows="8" placeholder="Paste your email here..."></textarea>
-                </div>
-                <button class="btn btn-primary" onclick="analyzeSentiment()">Analyze Sentiment</button>
-                <div class="result-row">
-                    <div class="form-group">
-                        <label>Sentiment</label>
-                        <input type="text" id="sentiment-result" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Confidence Score</label>
-                        <input type="text" id="sentiment-confidence" readonly>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Summarize Email Tab -->
-            <section id="summarize" class="tab-content">
-                <h2>Get concise summaries of long email threads</h2>
-                <div class="form-group">
-                    <label>Long Email Text</label>
-                    <textarea id="summarize-text" rows="12" placeholder="Paste long email or thread here..."></textarea>
-                </div>
-                <button class="btn btn-primary" onclick="summarizeEmail()">Summarize</button>
-                <div class="form-group">
-                    <label>Summary</label>
-                    <textarea id="summarize-result" rows="4" readonly></textarea>
-                </div>
-            </section>
-
-            <!-- A/B Testing Tab -->
-            <section id="abtest" class="tab-content">
-                <h2>Generate two email variants to test performance</h2>
-                <div class="form-group">
-                    <label>Email Topic/Subject</label>
-                    <input type="text" id="ab-topic" placeholder="e.g., Product Launch Announcement">
-                </div>
-                <div class="form-group">
-                    <label>Recipient Type</label>
-                    <input type="text" id="ab-recipient" placeholder="e.g., Enterprise Customers">
-                </div>
-                <div class="form-group">
-                    <label>Key Points</label>
-                    <textarea id="ab-keypoints" rows="3" placeholder="e.g., New features, pricing, availability"></textarea>
-                </div>
-                <button class="btn btn-primary" onclick="abTestEmail()">Generate A/B Variants</button>
-                <div class="result-row">
-                    <div class="form-group">
-                        <label>Variant A (Professional)</label>
-                        <textarea id="ab-variant-a" rows="8" readonly></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Variant B (Conversational)</label>
-                        <textarea id="ab-variant-b" rows="8" readonly></textarea>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Improve Tone Tab -->
-            <section id="improve" class="tab-content">
-                <h2>Rewrite emails with different tones</h2>
-                <div class="form-group">
-                    <label>Original Email</label>
-                    <textarea id="improve-text" rows="8"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Target Tone</label>
-                    <select id="improve-tone">
-                        <option value="More Professional">More Professional</option>
-                        <option value="More Friendly">More Friendly</option>
-                        <option value="More Formal">More Formal</option>
-                        <option value="More Persuasive">More Persuasive</option>
-                        <option value="More Concise">More Concise</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary" onclick="improveTone()">Improve Tone</button>
-                <div class="form-group">
-                    <label>Improved Email</label>
-                    <textarea id="improve-result" rows="8" readonly></textarea>
-                </div>
-            </section>
-
-            <!-- Research Lead Tab -->
-            <section id="research" class="tab-content">
-                <h2>Research lead and generate personalized outreach</h2>
-                <div class="form-group">
-                    <label>Company Name</label>
-                    <input type="text" id="research-company" placeholder="e.g., Acme Corp">
-                </div>
-                <div class="form-group">
-                    <label>Industry</label>
-                    <input type="text" id="research-industry" placeholder="e.g., SaaS, Healthcare, Finance">
-                </div>
-                <div class="form-group">
-                    <label>Target Role</label>
-                    <input type="text" id="research-role" placeholder="e.g., CTO, VP of Sales">
-                </div>
-                <div class="form-group">
-                    <label>Pain Points</label>
-                    <textarea id="research-pain" rows="3" placeholder="e.g., Scaling challenges, cost reduction, efficiency"></textarea>
-                </div>
-                <button class="btn btn-primary" onclick="researchLead()">Research & Generate Email</button>
-                <div class="form-group">
-                    <label>Generated Outreach Email</label>
-                    <textarea id="research-result" rows="10" readonly></textarea>
-                </div>
-            </section>
-
-            <!-- Batch Outreach Tab -->
-            <section id="batch" class="tab-content">
-                <h2>Generate outreach emails for multiple leads</h2>
-                <div class="form-group">
-                    <label>Email Template</label>
-                    <textarea id="batch-template" rows="4" placeholder="e.g., Hi {name}, I noticed {company} is doing great work in..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Leads (JSON format)</label>
-                    <textarea id="batch-leads" rows="6" placeholder='[{"name": "John", "company": "Acme"}, {"name": "Jane", "company": "TechCo"}]'></textarea>
-                </div>
-                <button class="btn btn-primary" onclick="batchOutreach()">Generate Batch Emails</button>
-                <div class="form-group">
-                    <label>Generated Emails</label>
-                    <textarea id="batch-result" rows="12" readonly></textarea>
-                </div>
-            </section>
-
-            <!-- Analyze Lead Tab -->
-            <section id="analyze" class="tab-content">
-                <h2>Analyze lead for outreach strategy</h2>
-                <div class="form-group">
-                    <label>Lead Information</label>
-                    <textarea id="analyze-info" rows="6" placeholder="Paste lead information: company, role, recent news, etc."></textarea>
-                </div>
-                <button class="btn btn-primary" onclick="analyzeLead()">Analyze Lead</button>
-                <div class="form-group">
-                    <label>Outreach Strategy Analysis</label>
-                    <textarea id="analyze-result" rows="10" readonly></textarea>
-                </div>
-            </section>
-
-            <!-- Appraise Repo Tab -->
-            <section id="appraise" class="tab-content">
-                <h2>Appraise GitHub repository for business value</h2>
-                <div class="form-group">
-                    <label>Repository URL</label>
-                    <input type="text" id="appraise-url" placeholder="e.g., https://github.com/owner/repo">
-                </div>
-                <button class="btn btn-primary" onclick="appraiseRepo()">Appraise Repository</button>
-                <div class="result-row">
-                    <div class="form-group">
-                        <label>Stars</label>
-                        <input type="text" id="appraise-stars" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Forks</label>
-                        <input type="text" id="appraise-forks" readonly>
-                    </div>
-                </div>
-                <div class="result-row">
-                    <div class="form-group">
-                        <label>Engagement Score</label>
-                        <input type="text" id="appraise-engagement" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Value Score</label>
-                        <input type="text" id="appraise-value" readonly>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>AI Appraisal</label>
-                    <textarea id="appraise-result" rows="10" readonly></textarea>
-                </div>
-            </section>
-        </main>
+        <div id="tool-panel" class="tool-panel hidden">
+            <button class="close-btn" onclick="closeTool()">✕</button>
+            <div id="tool-content"></div>
+        </div>
     </div>
 
     <script src="/static/app.js"></script>

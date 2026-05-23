@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-from transformers import pipeline
 import re
 import os
 import requests
@@ -7,6 +6,15 @@ from dotenv import load_dotenv
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
+
+# Import custom modules
+from models import ModelManager, functionality_1_generate_text, functionality_2_analyze_sentiment, functionality_3_summarize_text, functionality_4_translate_text, functionality_5_answer_question
+from email_tools import functionality_6_generate_reply, functionality_7_generate_subject_lines, functionality_8_edit_email, functionality_9_categorize_email
+from outreach_tools import functionality_10_generate_outreach_email, functionality_11_generate_follow_up, functionality_12_generate_cold_email, functionality_13_analyze_lead_fit, functionality_14_generate_outreach_sequence
+from analysis_tools import functionality_15_extract_key_points, functionality_16_analyze_sentiment_trend, functionality_17_compare_texts, functionality_18_generate_insights, functionality_19_classify_content
+from utils import functionality_20_generate_hashtags, functionality_21_generate_headlines, functionality_22_rewrite_text, functionality_23_generate_call_to_action, functionality_24_generate_meta_description
+from terminal import functionality_25_generate_sales_pitch, functionality_26_generate_pricing_strategy, functionality_27_generate_marketing_copy, functionality_28_analyze_competitor, functionality_29_generate_testimonials, TerminalInterface, AITestingFramework
+from bash_terminal import BashTerminal, session_manager
 
 load_dotenv()
 
@@ -22,11 +30,9 @@ GOOGLE_REDIRECT_URI = os.getenv('GOOGLE_REDIRECT_URI', 'http://localhost:5000/au
 HF_TOKEN = os.getenv('HUGGING_FACE_TOKEN', '')
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN', '')
 
-# Initialize Hugging Face pipelines (free inference, no API key needed)
+# Initialize Model Manager
 print("Loading models...")
-composer = pipeline("text-generation", model="gpt2", max_length=500)
-sentiment_analyzer = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+model_manager = ModelManager()
 print("Models loaded!")
 
 def clean_text(text: str) -> str:
@@ -144,12 +150,12 @@ def compose_email():
     if not topic or not key_points:
         return jsonify({'error': 'Please provide both a topic and key points.'}), 400
     
-    prompt = f"Subject: {topic}\n\nTo: {recipient}\n\nTone: {tone}\n\nKey points: {key_points}\n\nEmail:"
-    
     try:
-        result = composer(prompt, max_length=400, num_return_sequences=1, temperature=0.7)
-        generated = result[0]['generated_text']
-        email_body = generated.split("Email:")[-1].strip()
+        result = functionality_1_generate_text(
+            f"Subject: {topic}\n\nTo: {recipient}\n\nTone: {tone}\n\nKey points: {key_points}\n\nEmail:",
+            max_length=400
+        )
+        email_body = result[0].split("Email:")[-1].strip()
         return jsonify({'email': email_body if email_body else "Could not generate email. Please try again."})
     except Exception as e:
         return jsonify({'error': f"Error generating email: {str(e)}"}), 500
@@ -164,9 +170,9 @@ def analyze_sentiment():
         return jsonify({'error': 'Please provide text to analyze'}), 400
     
     try:
-        result = sentiment_analyzer(text[:512])
-        label = result[0]['label']
-        score = result[0]['score']
+        result = functionality_2_analyze_sentiment(text)
+        label = max(result, key=result.get)
+        score = result[label]
         sentiment = "Positive" if label == "POSITIVE" else "Negative"
         return jsonify({'sentiment': sentiment, 'confidence': score})
     except Exception as e:
@@ -374,8 +380,8 @@ def appraise_repo():
         
         prompt = f"Appraise this GitHub repository for business value:\n{repo_info}\n\nProvide:\n1. Technical quality assessment\n2. Market potential\n3. Maintenance effort estimate\n4. Recommended use cases\n5. Estimated development cost to replicate\n\nAppraisal:"
         
-        result = composer(prompt, max_length=500, num_return_sequences=1, temperature=0.6)
-        ai_appraisal = result[0]['generated_text'].split("Appraisal:")[-1].strip()
+        result = functionality_1_generate_text(prompt, max_length=500)
+        ai_appraisal = result[0].split("Appraisal:")[-1].strip()
         
         return jsonify({
             'repo_name': repo_data.get('full_name'),
@@ -393,6 +399,186 @@ def appraise_repo():
         })
     except Exception as e:
         return jsonify({'error': f"Error appraising repository: {str(e)}"}), 500
+
+# Terminal endpoints
+@app.route('/api/terminal/create-session', methods=['POST'])
+def create_terminal_session():
+    """Create a new terminal session."""
+    data = request.json
+    working_dir = data.get('working_dir', None)
+    
+    try:
+        terminal = session_manager.create_session(working_dir=working_dir)
+        return jsonify({
+            'success': True,
+            'session_id': terminal.session_id,
+            'working_directory': terminal.working_dir
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/terminal/execute', methods=['POST'])
+def execute_terminal_command():
+    """Execute a command in terminal session."""
+    data = request.json
+    session_id = data.get('session_id')
+    command = data.get('command')
+    
+    if not session_id or not command:
+        return jsonify({'error': 'Session ID and command required'}), 400
+    
+    try:
+        terminal = session_manager.get_session(session_id)
+        if not terminal:
+            return jsonify({'error': 'Session not found'}), 404
+        
+        result = terminal.execute_command(command)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/terminal/change-directory', methods=['POST'])
+def terminal_change_directory():
+    """Change working directory in terminal session."""
+    data = request.json
+    session_id = data.get('session_id')
+    path = data.get('path')
+    
+    if not session_id or not path:
+        return jsonify({'error': 'Session ID and path required'}), 400
+    
+    try:
+        terminal = session_manager.get_session(session_id)
+        if not terminal:
+            return jsonify({'error': 'Session not found'}), 404
+        
+        result = terminal.change_directory(path)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/terminal/list-directory', methods=['POST'])
+def terminal_list_directory():
+    """List directory contents in terminal session."""
+    data = request.json
+    session_id = data.get('session_id')
+    path = data.get('path', None)
+    
+    if not session_id:
+        return jsonify({'error': 'Session ID required'}), 400
+    
+    try:
+        terminal = session_manager.get_session(session_id)
+        if not terminal:
+            return jsonify({'error': 'Session not found'}), 404
+        
+        result = terminal.list_directory(path)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/terminal/read-file', methods=['POST'])
+def terminal_read_file():
+    """Read file in terminal session."""
+    data = request.json
+    session_id = data.get('session_id')
+    path = data.get('path')
+    max_lines = data.get('max_lines', 100)
+    
+    if not session_id or not path:
+        return jsonify({'error': 'Session ID and path required'}), 400
+    
+    try:
+        terminal = session_manager.get_session(session_id)
+        if not terminal:
+            return jsonify({'error': 'Session not found'}), 404
+        
+        result = terminal.read_file(path, max_lines)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/terminal/write-file', methods=['POST'])
+def terminal_write_file():
+    """Write file in terminal session."""
+    data = request.json
+    session_id = data.get('session_id')
+    path = data.get('path')
+    content = data.get('content')
+    overwrite = data.get('overwrite', False)
+    
+    if not session_id or not path or content is None:
+        return jsonify({'error': 'Session ID, path, and content required'}), 400
+    
+    try:
+        terminal = session_manager.get_session(session_id)
+        if not terminal:
+            return jsonify({'error': 'Session not found'}), 404
+        
+        result = terminal.write_file(path, content, overwrite)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/terminal/system-info', methods=['POST'])
+def terminal_system_info():
+    """Get system information from terminal session."""
+    data = request.json
+    session_id = data.get('session_id')
+    
+    if not session_id:
+        return jsonify({'error': 'Session ID required'}), 400
+    
+    try:
+        terminal = session_manager.get_session(session_id)
+        if not terminal:
+            return jsonify({'error': 'Session not found'}), 404
+        
+        result = terminal.get_system_info()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/terminal/run-tests', methods=['POST'])
+def terminal_run_tests():
+    """Run tests via terminal session."""
+    data = request.json
+    session_id = data.get('session_id')
+    test_type = data.get('test_type', 'all')
+    
+    if not session_id:
+        return jsonify({'error': 'Session ID required'}), 400
+    
+    try:
+        terminal = session_manager.get_session(session_id)
+        if not terminal:
+            return jsonify({'error': 'Session not found'}), 404
+        
+        result = terminal.run_test_suite(test_type)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/terminal/deploy', methods=['POST'])
+def terminal_deploy():
+    """Deploy application via terminal session."""
+    data = request.json
+    session_id = data.get('session_id')
+    environment = data.get('environment', 'production')
+    platform = data.get('platform', 'huggingface')
+    
+    if not session_id:
+        return jsonify({'error': 'Session ID required'}), 400
+    
+    try:
+        terminal = session_manager.get_session(session_id)
+        if not terminal:
+            return jsonify({'error': 'Session not found'}), 404
+        
+        result = terminal.deploy_application(environment, platform)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 7860))
