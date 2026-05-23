@@ -459,6 +459,637 @@ function openTool(toolName) {
                 <button class="btn btn-primary" onclick="deployTerminal()">Deploy</button>
             </div>
         `;
+    } else if (toolName === 'reply') {
+        content = `
+            <h2 class="tool-title">↩️ Email Reply Generator</h2>
+            <div class="form-group">
+                <label>Original Email</label>
+                <textarea id="reply-original" rows="8" placeholder="Paste original email..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Reply Tone</label>
+                <select id="reply-tone">
+                    <option value="Professional">Professional</option>
+                    <option value="Friendly">Friendly</option>
+                    <option value="Formal">Formal</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="generateReply()">Generate Reply</button>
+            <div class="form-group">
+                <label>Generated Reply</label>
+                <textarea id="reply-result" rows="10" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'subject') {
+        content = `
+            <h2 class="tool-title">📧 Subject Line Generator</h2>
+            <div class="form-group">
+                <label>Email Content</label>
+                <textarea id="subject-content" rows="6" placeholder="Paste email content..."></textarea>
+            </div>
+            <div class="result-row">
+                <div class="form-group">
+                    <label>Number of Variants</label>
+                    <input type="number" id="subject-num" value="5" min="1" max="10">
+                </div>
+                <div class="form-group">
+                    <label>Style</label>
+                    <select id="subject-style">
+                        <option value="Professional">Professional</option>
+                        <option value="Creative">Creative</option>
+                        <option value="Urgent">Urgent</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="generateSubjectLines()">Generate Subject Lines</button>
+            <div class="form-group">
+                <label>Generated Subject Lines</label>
+                <textarea id="subject-result" rows="8" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'edit') {
+        content = `
+            <h2 class="tool-title">✏️ Email Editor</h2>
+            <div class="form-group">
+                <label>Original Email</label>
+                <textarea id="edit-original" rows="8" placeholder="Paste email to edit..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Edit Instruction</label>
+                <input type="text" id="edit-instruction" placeholder="e.g., Make it more concise">
+            </div>
+            <div class="form-group">
+                <label>Preserve Tone</label>
+                <input type="checkbox" id="edit-preserve" checked>
+            </div>
+            <button class="btn btn-primary" onclick="editEmail()">Edit Email</button>
+            <div class="form-group">
+                <label>Edited Email</label>
+                <textarea id="edit-result" rows="10" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'categorize') {
+        content = `
+            <h2 class="tool-title">🏷️ Email Categorization</h2>
+            <div class="form-group">
+                <label>Email Content</label>
+                <textarea id="categorize-content" rows="6" placeholder="Paste email..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Categories (comma separated)</label>
+                <input type="text" id="categorize-categories" placeholder="Work, Personal, Promotion, Urgent">
+            </div>
+            <button class="btn btn-primary" onclick="categorizeEmail()">Categorize</button>
+            <div class="form-group">
+                <label>Category Scores</label>
+                <textarea id="categorize-result" rows="6" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'outreach') {
+        content = `
+            <h2 class="tool-title">🎯 Outreach Email Generator</h2>
+            <div class="form-group">
+                <label>Company Name</label>
+                <input type="text" id="outreach-company" placeholder="e.g., Acme Corp">
+            </div>
+            <div class="form-group">
+                <label>Industry</label>
+                <input type="text" id="outreach-industry" placeholder="e.g., SaaS">
+            </div>
+            <div class="form-group">
+                <label>Target Role</label>
+                <input type="text" id="outreach-role" placeholder="e.g., CTO">
+            </div>
+            <div class="form-group">
+                <label>Pain Points (comma separated)</label>
+                <input type="text" id="outreach-pain" placeholder="scaling, cost, efficiency">
+            </div>
+            <div class="form-group">
+                <label>Value Proposition</label>
+                <input type="text" id="outreach-value" placeholder="Our platform scales efficiently">
+            </div>
+            <button class="btn btn-primary" onclick="generateOutreachEmail()">Generate Outreach Email</button>
+            <div class="form-group">
+                <label>Generated Email</label>
+                <textarea id="outreach-result" rows="10" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'followup') {
+        content = `
+            <h2 class="tool-title">📞 Follow-up Email Generator</h2>
+            <div class="form-group">
+                <label>Previous Email</label>
+                <textarea id="followup-previous" rows="6" placeholder="Paste previous email..."></textarea>
+            </div>
+            <div class="result-row">
+                <div class="form-group">
+                    <label>Response Status</label>
+                    <select id="followup-status">
+                        <option value="No Response">No Response</option>
+                        <option value="Positive">Positive</option>
+                        <option value="Negative">Negative</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Days Since Contact</label>
+                    <input type="number" id="followup-days" value="7">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Next Action</label>
+                <input type="text" id="followup-action" placeholder="Schedule Call">
+            </div>
+            <button class="btn btn-primary" onclick="generateFollowUp()">Generate Follow-up</button>
+            <div class="form-group">
+                <label>Generated Follow-up</label>
+                <textarea id="followup-result" rows="10" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'cold') {
+        content = `
+            <h2 class="tool-title">❄️ Cold Email Generator</h2>
+            <div class="form-group">
+                <label>Prospect Name</label>
+                <input type="text" id="cold-name" placeholder="John Smith">
+            </div>
+            <div class="form-group">
+                <label>Company</label>
+                <input type="text" id="cold-company" placeholder="Acme Corp">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <input type="text" id="cold-role" placeholder="CTO">
+            </div>
+            <div class="form-group">
+                <label>Personalization Data</label>
+                <textarea id="cold-personalization" rows="3" placeholder="Recent funding, new product launch..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Call to Action Type</label>
+                <select id="cold-cta">
+                    <option value="Demo Request">Demo Request</option>
+                    <option value="Meeting">Meeting</option>
+                    <option value="Trial">Trial</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="generateColdEmail()">Generate Cold Email</button>
+            <div class="form-group">
+                <label>Generated Cold Email</label>
+                <textarea id="cold-result" rows="10" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'leadfit') {
+        content = `
+            <h2 class="tool-title">🎯 Lead Fit Analysis</h2>
+            <div class="form-group">
+                <label>Lead Info (JSON)</label>
+                <textarea id="leadfit-info" rows="4" placeholder='{"company_size": "100-500", "industry": "SaaS"}'></textarea>
+            </div>
+            <div class="form-group">
+                <label>Ideal Customer Profile (JSON)</label>
+                <textarea id="leadfit-ideal" rows="4" placeholder='{"company_size": "100-500", "industry": "SaaS"}'></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="analyzeLeadFit()">Analyze Fit</button>
+            <div class="form-group">
+                <label>Fit Scores</label>
+                <textarea id="leadfit-result" rows="6" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'sequence') {
+        content = `
+            <h2 class="tool-title">📋 Outreach Sequence Generator</h2>
+            <div class="form-group">
+                <label>Lead Info (JSON)</label>
+                <textarea id="sequence-info" rows="4" placeholder='{"name": "John", "company": "Acme"}'></textarea>
+            </div>
+            <div class="result-row">
+                <div class="form-group">
+                    <label>Sequence Length</label>
+                    <input type="number" id="sequence-length" value="5" min="3" max="10">
+                </div>
+                <div class="form-group">
+                    <label>Sequence Type</label>
+                    <select id="sequence-type">
+                        <option value="Standard">Standard</option>
+                        <option value="Aggressive">Aggressive</option>
+                        <option value="Passive">Passive</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="generateOutreachSequence()">Generate Sequence</button>
+            <div class="form-group">
+                <label>Generated Sequence</label>
+                <textarea id="sequence-result" rows="12" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'keypoints') {
+        content = `
+            <h2 class="tool-title">🔑 Key Points Extractor</h2>
+            <div class="form-group">
+                <label>Text</label>
+                <textarea id="keypoints-text" rows="8" placeholder="Paste text to analyze..."></textarea>
+            </div>
+            <div class="result-row">
+                <div class="form-group">
+                    <label>Number of Points</label>
+                    <input type="number" id="keypoints-num" value="5" min="3" max="10">
+                </div>
+                <div class="form-group">
+                    <label>Format</label>
+                    <select id="keypoints-format">
+                        <option value="Bullet Points">Bullet Points</option>
+                        <option value="Numbered List">Numbered List</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="extractKeyPoints()">Extract Key Points</button>
+            <div class="form-group">
+                <label>Key Points</label>
+                <textarea id="keypoints-result" rows="8" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'sentimenttrend') {
+        content = `
+            <h2 class="tool-title">📈 Sentiment Trend Analysis</h2>
+            <div class="form-group">
+                <label>Texts (one per line)</label>
+                <textarea id="sentimenttrend-texts" rows="8" placeholder="Enter multiple texts, one per line..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Time Labels (optional, comma separated)</label>
+                <input type="text" id="sentimenttrend-labels" placeholder="Day 1, Day 2, Day 3">
+            </div>
+            <button class="btn btn-primary" onclick="analyzeSentimentTrend()">Analyze Trend</button>
+            <div class="form-group">
+                <label>Trend Analysis</label>
+                <textarea id="sentimenttrend-result" rows="8" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'compare') {
+        content = `
+            <h2 class="tool-title">⚖️ Text Comparison</h2>
+            <div class="form-group">
+                <label>Text 1</label>
+                <textarea id="compare-text1" rows="6" placeholder="First text..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Text 2</label>
+                <textarea id="compare-text2" rows="6" placeholder="Second text..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Comparison Type</label>
+                <select id="compare-type">
+                    <option value="Similarity">Similarity</option>
+                    <option value="Differences">Differences</option>
+                    <option value="Style">Style</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="compareTexts()">Compare</button>
+            <div class="form-group">
+                <label>Comparison Result</label>
+                <textarea id="compare-result" rows="8" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'insights') {
+        content = `
+            <h2 class="tool-title">💡 Insights Generator</h2>
+            <div class="form-group">
+                <label>Data/Text</label>
+                <textarea id="insights-data" rows="8" placeholder="Paste data or text..."></textarea>
+            </div>
+            <div class="result-row">
+                <div class="form-group">
+                    <label>Insight Type</label>
+                    <select id="insights-type">
+                        <option value="Business">Business</option>
+                        <option value="Technical">Technical</option>
+                        <option value="Strategic">Strategic</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Context</label>
+                    <input type="text" id="insights-context" placeholder="Additional context...">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="generateInsights()">Generate Insights</button>
+            <div class="form-group">
+                <label>Generated Insights</label>
+                <textarea id="insights-result" rows="10" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'classify') {
+        content = `
+            <h2 class="tool-title">📂 Content Classification</h2>
+            <div class="form-group">
+                <label>Text</label>
+                <textarea id="classify-text" rows="6" placeholder="Paste text to classify..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Categories (comma separated)</label>
+                <input type="text" id="classify-categories" placeholder="Tech, Business, Health, Finance">
+            </div>
+            <div class="form-group">
+                <label>Multi-label</label>
+                <input type="checkbox" id="classify-multi">
+            </div>
+            <button class="btn btn-primary" onclick="classifyContent()">Classify</button>
+            <div class="form-group">
+                <label>Classification Scores</label>
+                <textarea id="classify-result" rows="6" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'hashtags') {
+        content = `
+            <h2 class="tool-title">#️⃣ Hashtag Generator</h2>
+            <div class="form-group">
+                <label>Content</label>
+                <textarea id="hashtags-content" rows="6" placeholder="Paste content..."></textarea>
+            </div>
+            <div class="result-row">
+                <div class="form-group">
+                    <label>Number of Hashtags</label>
+                    <input type="number" id="hashtags-num" value="10" min="5" max="30">
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="hashtags-type">
+                        <option value="Relevant">Relevant</option>
+                        <option value="Trending">Trending</option>
+                        <option value="Niche">Niche</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="generateHashtags()">Generate Hashtags</button>
+            <div class="form-group">
+                <label>Generated Hashtags</label>
+                <textarea id="hashtags-result" rows="6" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'headlines') {
+        content = `
+            <h2 class="tool-title">📰 Headline Generator</h2>
+            <div class="form-group">
+                <label>Content</label>
+                <textarea id="headlines-content" rows="6" placeholder="Paste content..."></textarea>
+            </div>
+            <div class="result-row">
+                <div class="form-group">
+                    <label>Number of Headlines</label>
+                    <input type="number" id="headlines-num" value="5" min="3" max="10">
+                </div>
+                <div class="form-group">
+                    <label>Style</label>
+                    <select id="headlines-style">
+                        <option value="Clickbait">Clickbait</option>
+                        <option value="Professional">Professional</option>
+                        <option value="Question">Question</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="generateHeadlines()">Generate Headlines</button>
+            <div class="form-group">
+                <label>Generated Headlines</label>
+                <textarea id="headlines-result" rows="8" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'rewrite') {
+        content = `
+            <h2 class="tool-title">🔄 Text Rewriter</h2>
+            <div class="form-group">
+                <label>Original Text</label>
+                <textarea id="rewrite-original" rows="8" placeholder="Paste text to rewrite..."></textarea>
+            </div>
+            <div class="result-row">
+                <div class="form-group">
+                    <label>Rewrite Style</label>
+                    <select id="rewrite-style">
+                        <option value="Simplified">Simplified</option>
+                        <option value="Formal">Formal</option>
+                        <option value="Casual">Casual</option>
+                        <option value="Technical">Technical</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Target Audience</label>
+                    <input type="text" id="rewrite-audience" placeholder="General">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="rewriteText()">Rewrite</button>
+            <div class="form-group">
+                <label>Rewritten Text</label>
+                <textarea id="rewrite-result" rows="10" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'cta') {
+        content = `
+            <h2 class="tool-title">👆 Call to Action Generator</h2>
+            <div class="form-group">
+                <label>Context</label>
+                <textarea id="cta-context" rows="4" placeholder="Describe the context..."></textarea>
+            </div>
+            <div class="result-row">
+                <div class="form-group">
+                    <label>Action Type</label>
+                    <select id="cta-type">
+                        <option value="Sign Up">Sign Up</option>
+                        <option value="Buy Now">Buy Now</option>
+                        <option value="Learn More">Learn More</option>
+                        <option value="Contact">Contact</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Urgency Level</label>
+                    <select id="cta-urgency">
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="generateCTA()">Generate CTA</button>
+            <div class="form-group">
+                <label>Generated CTA</label>
+                <textarea id="cta-result" rows="4" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'meta') {
+        content = `
+            <h2 class="tool-title">🔍 Meta Description Generator</h2>
+            <div class="form-group">
+                <label>Page Content</label>
+                <textarea id="meta-content" rows="6" placeholder="Paste page content..."></textarea>
+            </div>
+            <div class="result-row">
+                <div class="form-group">
+                    <label>Max Length</label>
+                    <input type="number" id="meta-length" value="160" min="50" max="300">
+                </div>
+                <div class="form-group">
+                    <label>SEO Focus</label>
+                    <input type="checkbox" id="meta-seo" checked>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="generateMetaDescription()">Generate Meta Description</button>
+            <div class="form-group">
+                <label>Meta Description</label>
+                <textarea id="meta-result" rows="4" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'sales') {
+        content = `
+            <h2 class="tool-title">💰 Sales Pitch Generator</h2>
+            <div class="form-group">
+                <label>Product</label>
+                <input type="text" id="sales-product" placeholder="Product name">
+            </div>
+            <div class="form-group">
+                <label>Target Audience</label>
+                <input type="text" id="sales-audience" placeholder="e.g., CTOs at mid-size companies">
+            </div>
+            <div class="form-group">
+                <label>Key Benefits (comma separated)</label>
+                <input type="text" id="sales-benefits" placeholder="efficiency, cost savings, scalability">
+            </div>
+            <div class="form-group">
+                <label>Differentiators (comma separated)</label>
+                <input type="text" id="sales-differentiators" placeholder="AI-powered, real-time, secure">
+            </div>
+            <div class="form-group">
+                <label>Pitch Length</label>
+                <select id="sales-length">
+                    <option value="Short">Short</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Long">Long</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="generateSalesPitch()">Generate Sales Pitch</button>
+            <div class="form-group">
+                <label>Sales Pitch</label>
+                <textarea id="sales-result" rows="10" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'pricing') {
+        content = `
+            <h2 class="tool-title">💲 Pricing Strategy Generator</h2>
+            <div class="form-group">
+                <label>Product</label>
+                <input type="text" id="pricing-product" placeholder="Product name">
+            </div>
+            <div class="form-group">
+                <label>Market Position</label>
+                <select id="pricing-position">
+                    <option value="Premium">Premium</option>
+                    <option value="Mid-tier">Mid-tier</option>
+                    <option value="Budget">Budget</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Competitor Prices (comma separated)</label>
+                <input type="text" id="pricing-competitors" placeholder="99, 149, 199">
+            </div>
+            <div class="form-group">
+                <label>Value Proposition</label>
+                <input type="text" id="pricing-value" placeholder="Unique value proposition">
+            </div>
+            <button class="btn btn-primary" onclick="generatePricingStrategy()">Generate Pricing Strategy</button>
+            <div class="form-group">
+                <label>Pricing Strategy</label>
+                <textarea id="pricing-result" rows="8" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'marketing') {
+        content = `
+            <h2 class="tool-title">📢 Marketing Copy Generator</h2>
+            <div class="form-group">
+                <label>Product</label>
+                <input type="text" id="marketing-product" placeholder="Product name">
+            </div>
+            <div class="form-group">
+                <label>Channel</label>
+                <select id="marketing-channel">
+                    <option value="Email">Email</option>
+                    <option value="Social">Social Media</option>
+                    <option value="Ad">Advertisement</option>
+                    <option value="Landing Page">Landing Page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Target Audience</label>
+                <input type="text" id="marketing-audience" placeholder="Target audience">
+            </div>
+            <div class="form-group">
+                <label>Campaign Goal</label>
+                <input type="text" id="marketing-goal" placeholder="e.g., Demo signups">
+            </div>
+            <div class="form-group">
+                <label>Copy Length</label>
+                <select id="marketing-length">
+                    <option value="Short">Short</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Long">Long</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="generateMarketingCopy()">Generate Marketing Copy</button>
+            <div class="form-group">
+                <label>Marketing Copy</label>
+                <textarea id="marketing-result" rows="10" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'competitor') {
+        content = `
+            <h2 class="tool-title">🏢 Competitor Analysis</h2>
+            <div class="form-group">
+                <label>Competitor Name</label>
+                <input type="text" id="competitor-name" placeholder="Competitor company name">
+            </div>
+            <div class="form-group">
+                <label>Analysis Type</label>
+                <select id="competitor-type">
+                    <option value="Comprehensive">Comprehensive</option>
+                    <option value="Pricing">Pricing</option>
+                    <option value="Features">Features</option>
+                    <option value="Marketing">Marketing</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="analyzeCompetitor()">Analyze Competitor</button>
+            <div class="form-group">
+                <label>Competitor Analysis</label>
+                <textarea id="competitor-result" rows="12" readonly></textarea>
+            </div>
+        `;
+    } else if (toolName === 'testimonials') {
+        content = `
+            <h2 class="tool-title">⭐ Testimonial Generator</h2>
+            <div class="form-group">
+                <label>Product</label>
+                <input type="text" id="testimonials-product" placeholder="Product name">
+            </div>
+            <div class="form-group">
+                <label>Customer Type</label>
+                <select id="testimonials-type">
+                    <option value="Enterprise">Enterprise</option>
+                    <option value="SMB">SMB</option>
+                    <option value="Individual">Individual</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Number of Testimonials</label>
+                <input type="number" id="testimonials-num" value="5" min="3" max="10">
+            </div>
+            <div class="form-group">
+                <label>Testimonial Style</label>
+                <select id="testimonials-style">
+                    <option value="Authentic">Authentic</option>
+                    <option value="Professional">Professional</option>
+                    <option value="Casual">Casual</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="generateTestimonials()">Generate Testimonials</button>
+            <div class="form-group">
+                <label>Generated Testimonials</label>
+                <textarea id="testimonials-result" rows="12" readonly></textarea>
+            </div>
+        `;
     }
     
     toolContent.innerHTML = content;
@@ -471,4 +1102,503 @@ function openTool(toolName) {
 function closeTool() {
     const toolPanel = document.getElementById('tool-panel');
     toolPanel.classList.add('hidden');
+}
+
+// New API call functions for all 29 LLM functionalities
+async function generateReply() {
+    const originalEmail = document.getElementById('reply-original').value;
+    const replyTone = document.getElementById('reply-tone').value;
+    
+    if (!originalEmail) {
+        alert('Please provide original email');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-reply', {
+        original_email: originalEmail,
+        reply_tone: replyTone
+    });
+    
+    document.getElementById('reply-result').value = result.reply;
+}
+
+async function generateSubjectLines() {
+    const emailContent = document.getElementById('subject-content').value;
+    const numVariants = document.getElementById('subject-num').value;
+    const style = document.getElementById('subject-style').value;
+    
+    if (!emailContent) {
+        alert('Please provide email content');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-subject-lines', {
+        email_content: emailContent,
+        num_variants: parseInt(numVariants),
+        style: style
+    });
+    
+    document.getElementById('subject-result').value = result.subject_lines.join('\n');
+}
+
+async function editEmail() {
+    const originalEmail = document.getElementById('edit-original').value;
+    const editInstruction = document.getElementById('edit-instruction').value;
+    const preserveTone = document.getElementById('edit-preserve').checked;
+    
+    if (!originalEmail || !editInstruction) {
+        alert('Please provide original email and edit instruction');
+        return;
+    }
+    
+    const result = await callAPI('/api/edit-email', {
+        original_email: originalEmail,
+        edit_instruction: editInstruction,
+        preserve_tone: preserveTone
+    });
+    
+    document.getElementById('edit-result').value = result.edited_email;
+}
+
+async function categorizeEmail() {
+    const emailContent = document.getElementById('categorize-content').value;
+    const categoriesText = document.getElementById('categorize-categories').value;
+    const categories = categoriesText.split(',').map(c => c.trim());
+    
+    if (!emailContent) {
+        alert('Please provide email content');
+        return;
+    }
+    
+    const result = await callAPI('/api/categorize-email', {
+        email_content: emailContent,
+        categories: categories
+    });
+    
+    const categoryText = Object.entries(result.categories)
+        .map(([cat, score]) => `${cat}: ${(score * 100).toFixed(1)}%`)
+        .join('\n');
+    document.getElementById('categorize-result').value = categoryText;
+}
+
+async function generateOutreachEmail() {
+    const companyName = document.getElementById('outreach-company').value;
+    const industry = document.getElementById('outreach-industry').value;
+    const targetRole = document.getElementById('outreach-role').value;
+    const painPointsText = document.getElementById('outreach-pain').value;
+    const painPoints = painPointsText.split(',').map(p => p.trim());
+    const valueProposition = document.getElementById('outreach-value').value;
+    const tone = 'Professional';
+    
+    if (!companyName || !industry) {
+        alert('Please provide company name and industry');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-outreach-email', {
+        company_name: companyName,
+        industry: industry,
+        target_role: targetRole,
+        pain_points: painPoints,
+        value_proposition: valueProposition,
+        tone: tone
+    });
+    
+    document.getElementById('outreach-result').value = result.email;
+}
+
+async function generateFollowUp() {
+    const previousEmail = document.getElementById('followup-previous').value;
+    const responseStatus = document.getElementById('followup-status').value;
+    const daysSinceContact = document.getElementById('followup-days').value;
+    const nextAction = document.getElementById('followup-action').value;
+    
+    if (!previousEmail) {
+        alert('Please provide previous email');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-follow-up', {
+        previous_email: previousEmail,
+        response_status: responseStatus,
+        days_since_contact: parseInt(daysSinceContact),
+        next_action: nextAction
+    });
+    
+    document.getElementById('followup-result').value = result.follow_up;
+}
+
+async function generateColdEmail() {
+    const name = document.getElementById('cold-name').value;
+    const company = document.getElementById('cold-company').value;
+    const role = document.getElementById('cold-role').value;
+    const personalization = document.getElementById('cold-personalization').value;
+    const ctaType = document.getElementById('cold-cta').value;
+    
+    const prospectInfo = { name, company, role };
+    const personalizationData = { personalization };
+    
+    if (!name || !company) {
+        alert('Please provide prospect name and company');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-cold-email', {
+        prospect_info: prospectInfo,
+        personalization_data: personalizationData,
+        cta_type: ctaType
+    });
+    
+    document.getElementById('cold-result').value = result.cold_email;
+}
+
+async function analyzeLeadFit() {
+    const leadInfoText = document.getElementById('leadfit-info').value;
+    const idealProfileText = document.getElementById('leadfit-ideal').value;
+    
+    try {
+        const leadInfo = JSON.parse(leadInfoText);
+        const idealProfile = JSON.parse(idealProfileText);
+        
+        const result = await callAPI('/api/analyze-lead-fit', {
+            lead_info: leadInfo,
+            ideal_customer_profile: idealProfile
+        });
+        
+        const fitText = Object.entries(result.fit_scores)
+            .map(([metric, score]) => `${metric}: ${(score * 100).toFixed(1)}%`)
+            .join('\n');
+        document.getElementById('leadfit-result').value = fitText;
+    } catch (e) {
+        alert('Invalid JSON format');
+    }
+}
+
+async function generateOutreachSequence() {
+    const leadInfoText = document.getElementById('sequence-info').value;
+    const sequenceLength = document.getElementById('sequence-length').value;
+    const sequenceType = document.getElementById('sequence-type').value;
+    
+    try {
+        const leadInfo = JSON.parse(leadInfoText);
+        
+        const result = await callAPI('/api/generate-outreach-sequence', {
+            lead_info: leadInfo,
+            sequence_length: parseInt(sequenceLength),
+            sequence_type: sequenceType
+        });
+        
+        const sequenceText = result.sequence.map((touch, i) => 
+            `Touch ${i + 1}: ${touch.channel} - ${touch.message}`
+        ).join('\n\n');
+        document.getElementById('sequence-result').value = sequenceText;
+    } catch (e) {
+        alert('Invalid JSON format');
+    }
+}
+
+async function extractKeyPoints() {
+    const text = document.getElementById('keypoints-text').value;
+    const numPoints = document.getElementById('keypoints-num').value;
+    const summaryType = document.getElementById('keypoints-format').value;
+    
+    if (!text) {
+        alert('Please provide text');
+        return;
+    }
+    
+    const result = await callAPI('/api/extract-key-points', {
+        text: text,
+        num_points: parseInt(numPoints),
+        summary_type: summaryType
+    });
+    
+    document.getElementById('keypoints-result').value = result.key_points.join('\n');
+}
+
+async function analyzeSentimentTrend() {
+    const textsText = document.getElementById('sentimenttrend-texts').value;
+    const labelsText = document.getElementById('sentimenttrend-labels').value;
+    
+    const texts = textsText.split('\n').filter(t => t.trim());
+    const timeLabels = labelsText ? labelsText.split(',').map(l => l.trim()) : null;
+    
+    if (!texts.length) {
+        alert('Please provide texts');
+        return;
+    }
+    
+    const result = await callAPI('/api/analyze-sentiment-trend', {
+        texts: texts,
+        time_labels: timeLabels
+    });
+    
+    const trendText = `Labels: ${result.trends.labels.join(', ')}\nPositive: ${result.trends.positive.join(', ')}\nNegative: ${result.trends.negative.join(', ')}`;
+    document.getElementById('sentimenttrend-result').value = trendText;
+}
+
+async function compareTexts() {
+    const text1 = document.getElementById('compare-text1').value;
+    const text2 = document.getElementById('compare-text2').value;
+    const comparisonType = document.getElementById('compare-type').value;
+    
+    if (!text1 || !text2) {
+        alert('Please provide both texts');
+        return;
+    }
+    
+    const result = await callAPI('/api/compare-texts', {
+        text1: text1,
+        text2: text2,
+        comparison_type: comparisonType
+    });
+    
+    document.getElementById('compare-result').value = result.comparison.analysis;
+}
+
+async function generateInsights() {
+    const data = document.getElementById('insights-data').value;
+    const insightType = document.getElementById('insights-type').value;
+    const context = document.getElementById('insights-context').value;
+    
+    if (!data) {
+        alert('Please provide data');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-insights', {
+        data: data,
+        insight_type: insightType,
+        context: context
+    });
+    
+    document.getElementById('insights-result').value = result.insights.join('\n');
+}
+
+async function classifyContent() {
+    const text = document.getElementById('classify-text').value;
+    const categoriesText = document.getElementById('classify-categories').value;
+    const multiLabel = document.getElementById('classify-multi').checked;
+    const categories = categoriesText.split(',').map(c => c.trim());
+    
+    if (!text || !categories.length) {
+        alert('Please provide text and categories');
+        return;
+    }
+    
+    const result = await callAPI('/api/classify-content', {
+        text: text,
+        categories: categories,
+        multi_label: multiLabel
+    });
+    
+    const classText = Object.entries(result.classification)
+        .map(([cat, score]) => `${cat}: ${(score * 100).toFixed(1)}%`)
+        .join('\n');
+    document.getElementById('classify-result').value = classText;
+}
+
+async function generateHashtags() {
+    const content = document.getElementById('hashtags-content').value;
+    const numHashtags = document.getElementById('hashtags-num').value;
+    const hashtagType = document.getElementById('hashtags-type').value;
+    
+    if (!content) {
+        alert('Please provide content');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-hashtags', {
+        content: content,
+        num_hashtags: parseInt(numHashtags),
+        hashtag_type: hashtagType
+    });
+    
+    document.getElementById('hashtags-result').value = result.hashtags.join(' ');
+}
+
+async function generateHeadlines() {
+    const content = document.getElementById('headlines-content').value;
+    const numVariants = document.getElementById('headlines-num').value;
+    const headlineStyle = document.getElementById('headlines-style').value;
+    
+    if (!content) {
+        alert('Please provide content');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-headlines', {
+        content: content,
+        num_variants: parseInt(numVariants),
+        headline_style: headlineStyle
+    });
+    
+    document.getElementById('headlines-result').value = result.headlines.join('\n');
+}
+
+async function rewriteText() {
+    const originalText = document.getElementById('rewrite-original').value;
+    const rewriteStyle = document.getElementById('rewrite-style').value;
+    const targetAudience = document.getElementById('rewrite-audience').value;
+    
+    if (!originalText) {
+        alert('Please provide original text');
+        return;
+    }
+    
+    const result = await callAPI('/api/rewrite-text', {
+        original_text: originalText,
+        rewrite_style: rewriteStyle,
+        target_audience: targetAudience
+    });
+    
+    document.getElementById('rewrite-result').value = result.rewritten_text;
+}
+
+async function generateCTA() {
+    const context = document.getElementById('cta-context').value;
+    const actionType = document.getElementById('cta-type').value;
+    const urgencyLevel = document.getElementById('cta-urgency').value;
+    
+    if (!context) {
+        alert('Please provide context');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-cta', {
+        context: context,
+        action_type: actionType,
+        urgency_level: urgencyLevel
+    });
+    
+    document.getElementById('cta-result').value = result.cta;
+}
+
+async function generateMetaDescription() {
+    const content = document.getElementById('meta-content').value;
+    const maxLength = document.getElementById('meta-length').value;
+    const seoFocus = document.getElementById('meta-seo').checked;
+    
+    if (!content) {
+        alert('Please provide content');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-meta-description', {
+        content: content,
+        max_length: parseInt(maxLength),
+        seo_focus: seoFocus
+    });
+    
+    document.getElementById('meta-result').value = result.meta_description;
+}
+
+async function generateSalesPitch() {
+    const product = document.getElementById('sales-product').value;
+    const targetAudience = document.getElementById('sales-audience').value;
+    const benefitsText = document.getElementById('sales-benefits').value;
+    const differentiatorsText = document.getElementById('sales-differentiators').value;
+    const pitchLength = document.getElementById('sales-length').value;
+    
+    const keyBenefits = benefitsText.split(',').map(b => b.trim());
+    const differentiators = differentiatorsText.split(',').map(d => d.trim());
+    
+    if (!product || !targetAudience) {
+        alert('Please provide product and target audience');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-sales-pitch', {
+        product: product,
+        target_audience: targetAudience,
+        key_benefits: keyBenefits,
+        differentiators: differentiators,
+        pitch_length: pitchLength
+    });
+    
+    document.getElementById('sales-result').value = result.sales_pitch;
+}
+
+async function generatePricingStrategy() {
+    const product = document.getElementById('pricing-product').value;
+    const marketPosition = document.getElementById('pricing-position').value;
+    const competitorsText = document.getElementById('pricing-competitors').value;
+    const valueProposition = document.getElementById('pricing-value').value;
+    
+    const competitorPrices = competitorsText.split(',').map(p => parseInt(p.trim()));
+    
+    if (!product) {
+        alert('Please provide product');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-pricing-strategy', {
+        product: product,
+        market_position: marketPosition,
+        competitor_prices: competitorPrices,
+        value_proposition: valueProposition
+    });
+    
+    document.getElementById('pricing-result').value = result.pricing_strategy.strategy;
+}
+
+async function generateMarketingCopy() {
+    const product = document.getElementById('marketing-product').value;
+    const channel = document.getElementById('marketing-channel').value;
+    const targetAudience = document.getElementById('marketing-audience').value;
+    const campaignGoal = document.getElementById('marketing-goal').value;
+    const copyLength = document.getElementById('marketing-length').value;
+    
+    if (!product || !targetAudience) {
+        alert('Please provide product and target audience');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-marketing-copy', {
+        product: product,
+        channel: channel,
+        target_audience: targetAudience,
+        campaign_goal: campaignGoal,
+        copy_length: copyLength
+    });
+    
+    document.getElementById('marketing-result').value = result.marketing_copy;
+}
+
+async function analyzeCompetitor() {
+    const competitorName = document.getElementById('competitor-name').value;
+    const analysisType = document.getElementById('competitor-type').value;
+    
+    if (!competitorName) {
+        alert('Please provide competitor name');
+        return;
+    }
+    
+    const result = await callAPI('/api/analyze-competitor', {
+        competitor_name: competitorName,
+        analysis_type: analysisType
+    });
+    
+    document.getElementById('competitor-result').value = result.competitor_analysis.analysis;
+}
+
+async function generateTestimonials() {
+    const product = document.getElementById('testimonials-product').value;
+    const customerType = document.getElementById('testimonials-type').value;
+    const numTestimonials = document.getElementById('testimonials-num').value;
+    const testimonialStyle = document.getElementById('testimonials-style').value;
+    
+    if (!product) {
+        alert('Please provide product');
+        return;
+    }
+    
+    const result = await callAPI('/api/generate-testimonials', {
+        product: product,
+        customer_type: customerType,
+        num_testimonials: parseInt(numTestimonials),
+        testimonial_style: testimonialStyle
+    });
+    
+    document.getElementById('testimonials-result').value = result.testimonials.join('\n\n');
 }

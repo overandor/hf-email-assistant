@@ -580,6 +580,426 @@ def terminal_deploy():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Email Tools endpoints
+@app.route('/api/generate-reply', methods=['POST'])
+def generate_reply():
+    """Generate email reply."""
+    data = request.json
+    original_email = data.get('original_email', '')
+    reply_tone = data.get('reply_tone', 'Professional')
+    
+    if not original_email:
+        return jsonify({'error': 'Original email required'}), 400
+    
+    try:
+        result = functionality_6_generate_reply(original_email, reply_tone)
+        return jsonify({'reply': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/generate-subject-lines', methods=['POST'])
+def generate_subject_lines():
+    """Generate subject lines."""
+    data = request.json
+    email_content = data.get('email_content', '')
+    num_variants = data.get('num_variants', 5)
+    style = data.get('style', 'Professional')
+    
+    if not email_content:
+        return jsonify({'error': 'Email content required'}), 400
+    
+    try:
+        result = functionality_7_generate_subject_lines(email_content, num_variants, style)
+        return jsonify({'subject_lines': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/edit-email', methods=['POST'])
+def edit_email():
+    """Edit email."""
+    data = request.json
+    original_email = data.get('original_email', '')
+    edit_instruction = data.get('edit_instruction', '')
+    preserve_tone = data.get('preserve_tone', True)
+    
+    if not original_email or not edit_instruction:
+        return jsonify({'error': 'Original email and edit instruction required'}), 400
+    
+    try:
+        result = functionality_8_edit_email(original_email, edit_instruction, preserve_tone)
+        return jsonify({'edited_email': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/categorize-email', methods=['POST'])
+def categorize_email():
+    """Categorize email."""
+    data = request.json
+    email_content = data.get('email_content', '')
+    categories = data.get('categories', None)
+    
+    if not email_content:
+        return jsonify({'error': 'Email content required'}), 400
+    
+    try:
+        result = functionality_9_categorize_email(email_content, categories)
+        return jsonify({'categories': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Outreach Tools endpoints
+@app.route('/api/generate-outreach-email', methods=['POST'])
+def generate_outreach_email():
+    """Generate outreach email."""
+    data = request.json
+    company_name = data.get('company_name', '')
+    industry = data.get('industry', '')
+    target_role = data.get('target_role', '')
+    pain_points = data.get('pain_points', [])
+    value_proposition = data.get('value_proposition', '')
+    tone = data.get('tone', 'Professional')
+    
+    if not company_name or not industry:
+        return jsonify({'error': 'Company name and industry required'}), 400
+    
+    try:
+        result = functionality_10_generate_outreach_email(
+            company_name, industry, target_role, pain_points, value_proposition, tone
+        )
+        return jsonify({'email': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/generate-follow-up', methods=['POST'])
+def generate_follow_up():
+    """Generate follow-up email."""
+    data = request.json
+    previous_email = data.get('previous_email', '')
+    response_status = data.get('response_status', 'No Response')
+    days_since_contact = data.get('days_since_contact', 7)
+    next_action = data.get('next_action', 'Schedule Call')
+    
+    if not previous_email:
+        return jsonify({'error': 'Previous email required'}), 400
+    
+    try:
+        result = functionality_11_generate_follow_up(previous_email, response_status, days_since_contact, next_action)
+        return jsonify({'follow_up': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/generate-cold-email', methods=['POST'])
+def generate_cold_email():
+    """Generate cold email."""
+    data = request.json
+    prospect_info = data.get('prospect_info', {})
+    personalization_data = data.get('personalization_data', {})
+    cta_type = data.get('cta_type', 'Demo Request')
+    
+    if not prospect_info:
+        return jsonify({'error': 'Prospect info required'}), 400
+    
+    try:
+        result = functionality_12_generate_cold_email(prospect_info, personalization_data, cta_type)
+        return jsonify({'cold_email': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/analyze-lead-fit', methods=['POST'])
+def analyze_lead_fit():
+    """Analyze lead fit."""
+    data = request.json
+    lead_info = data.get('lead_info', {})
+    ideal_customer_profile = data.get('ideal_customer_profile', {})
+    
+    if not lead_info:
+        return jsonify({'error': 'Lead info required'}), 400
+    
+    try:
+        result = functionality_13_analyze_lead_fit(lead_info, ideal_customer_profile)
+        return jsonify({'fit_scores': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/generate-outreach-sequence', methods=['POST'])
+def generate_outreach_sequence():
+    """Generate outreach sequence."""
+    data = request.json
+    lead_info = data.get('lead_info', {})
+    sequence_length = data.get('sequence_length', 5)
+    sequence_type = data.get('sequence_type', 'Standard')
+    
+    if not lead_info:
+        return jsonify({'error': 'Lead info required'}), 400
+    
+    try:
+        result = functionality_14_generate_outreach_sequence(lead_info, sequence_length, sequence_type)
+        return jsonify({'sequence': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Analysis Tools endpoints
+@app.route('/api/extract-key-points', methods=['POST'])
+def extract_key_points():
+    """Extract key points."""
+    data = request.json
+    text = data.get('text', '')
+    num_points = data.get('num_points', 5)
+    summary_type = data.get('summary_type', 'Bullet Points')
+    
+    if not text:
+        return jsonify({'error': 'Text required'}), 400
+    
+    try:
+        result = functionality_15_extract_key_points(text, num_points, summary_type)
+        return jsonify({'key_points': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/analyze-sentiment-trend', methods=['POST'])
+def analyze_sentiment_trend():
+    """Analyze sentiment trend."""
+    data = request.json
+    texts = data.get('texts', [])
+    time_labels = data.get('time_labels', None)
+    
+    if not texts:
+        return jsonify({'error': 'Texts required'}), 400
+    
+    try:
+        result = functionality_16_analyze_sentiment_trend(texts, time_labels)
+        return jsonify({'trends': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/compare-texts', methods=['POST'])
+def compare_texts():
+    """Compare texts."""
+    data = request.json
+    text1 = data.get('text1', '')
+    text2 = data.get('text2', '')
+    comparison_type = data.get('comparison_type', 'Similarity')
+    
+    if not text1 or not text2:
+        return jsonify({'error': 'Both texts required'}), 400
+    
+    try:
+        result = functionality_17_compare_texts(text1, text2, comparison_type)
+        return jsonify({'comparison': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/generate-insights', methods=['POST'])
+def generate_insights():
+    """Generate insights."""
+    data = request.json
+    data_text = data.get('data', '')
+    insight_type = data.get('insight_type', 'Business')
+    context = data.get('context', '')
+    
+    if not data_text:
+        return jsonify({'error': 'Data required'}), 400
+    
+    try:
+        result = functionality_18_generate_insights(data_text, insight_type, context)
+        return jsonify({'insights': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/classify-content', methods=['POST'])
+def classify_content():
+    """Classify content."""
+    data = request.json
+    text = data.get('text', '')
+    categories = data.get('categories', [])
+    multi_label = data.get('multi_label', False)
+    
+    if not text or not categories:
+        return jsonify({'error': 'Text and categories required'}), 400
+    
+    try:
+        result = functionality_19_classify_content(text, categories, multi_label)
+        return jsonify({'classification': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Utils endpoints
+@app.route('/api/generate-hashtags', methods=['POST'])
+def generate_hashtags():
+    """Generate hashtags."""
+    data = request.json
+    content = data.get('content', '')
+    num_hashtags = data.get('num_hashtags', 10)
+    hashtag_type = data.get('hashtag_type', 'Relevant')
+    
+    if not content:
+        return jsonify({'error': 'Content required'}), 400
+    
+    try:
+        result = functionality_20_generate_hashtags(content, num_hashtags, hashtag_type)
+        return jsonify({'hashtags': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/generate-headlines', methods=['POST'])
+def generate_headlines():
+    """Generate headlines."""
+    data = request.json
+    content = data.get('content', '')
+    num_variants = data.get('num_variants', 5)
+    headline_style = data.get('headline_style', 'Clickbait')
+    
+    if not content:
+        return jsonify({'error': 'Content required'}), 400
+    
+    try:
+        result = functionality_21_generate_headlines(content, num_variants, headline_style)
+        return jsonify({'headlines': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/rewrite-text', methods=['POST'])
+def rewrite_text():
+    """Rewrite text."""
+    data = request.json
+    original_text = data.get('original_text', '')
+    rewrite_style = data.get('rewrite_style', 'Simplified')
+    target_audience = data.get('target_audience', 'General')
+    
+    if not original_text:
+        return jsonify({'error': 'Original text required'}), 400
+    
+    try:
+        result = functionality_22_rewrite_text(original_text, rewrite_style, target_audience)
+        return jsonify({'rewritten_text': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/generate-cta', methods=['POST'])
+def generate_cta():
+    """Generate call to action."""
+    data = request.json
+    context = data.get('context', '')
+    action_type = data.get('action_type', 'Sign Up')
+    urgency_level = data.get('urgency_level', 'Medium')
+    
+    if not context:
+        return jsonify({'error': 'Context required'}), 400
+    
+    try:
+        result = functionality_23_generate_call_to_action(context, action_type, urgency_level)
+        return jsonify({'cta': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/generate-meta-description', methods=['POST'])
+def generate_meta_description():
+    """Generate meta description."""
+    data = request.json
+    content = data.get('content', '')
+    max_length = data.get('max_length', 160)
+    seo_focus = data.get('seo_focus', True)
+    
+    if not content:
+        return jsonify({'error': 'Content required'}), 400
+    
+    try:
+        result = functionality_24_generate_meta_description(content, max_length, seo_focus)
+        return jsonify({'meta_description': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Terminal/Sales endpoints
+@app.route('/api/generate-sales-pitch', methods=['POST'])
+def generate_sales_pitch():
+    """Generate sales pitch."""
+    data = request.json
+    product = data.get('product', '')
+    target_audience = data.get('target_audience', '')
+    key_benefits = data.get('key_benefits', [])
+    differentiators = data.get('differentiators', [])
+    pitch_length = data.get('pitch_length', 'Medium')
+    
+    if not product or not target_audience:
+        return jsonify({'error': 'Product and target audience required'}), 400
+    
+    try:
+        result = functionality_25_generate_sales_pitch(product, target_audience, key_benefits, differentiators, pitch_length)
+        return jsonify({'sales_pitch': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/generate-pricing-strategy', methods=['POST'])
+def generate_pricing_strategy():
+    """Generate pricing strategy."""
+    data = request.json
+    product = data.get('product', '')
+    market_position = data.get('market_position', 'Mid-tier')
+    competitor_prices = data.get('competitor_prices', [])
+    value_proposition = data.get('value_proposition', '')
+    
+    if not product:
+        return jsonify({'error': 'Product required'}), 400
+    
+    try:
+        result = functionality_26_generate_pricing_strategy(product, market_position, competitor_prices, value_proposition)
+        return jsonify({'pricing_strategy': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/generate-marketing-copy', methods=['POST'])
+def generate_marketing_copy():
+    """Generate marketing copy."""
+    data = request.json
+    product = data.get('product', '')
+    channel = data.get('channel', 'Email')
+    target_audience = data.get('target_audience', '')
+    campaign_goal = data.get('campaign_goal', '')
+    copy_length = data.get('copy_length', 'Medium')
+    
+    if not product or not target_audience:
+        return jsonify({'error': 'Product and target audience required'}), 400
+    
+    try:
+        result = functionality_27_generate_marketing_copy(product, channel, target_audience, campaign_goal, copy_length)
+        return jsonify({'marketing_copy': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/analyze-competitor', methods=['POST'])
+def analyze_competitor():
+    """Analyze competitor."""
+    data = request.json
+    competitor_name = data.get('competitor_name', '')
+    analysis_type = data.get('analysis_type', 'Comprehensive')
+    
+    if not competitor_name:
+        return jsonify({'error': 'Competitor name required'}), 400
+    
+    try:
+        result = functionality_28_analyze_competitor(competitor_name, analysis_type)
+        return jsonify({'competitor_analysis': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/generate-testimonials', methods=['POST'])
+def generate_testimonials():
+    """Generate testimonials."""
+    data = request.json
+    product = data.get('product', '')
+    customer_type = data.get('customer_type', 'Enterprise')
+    num_testimonials = data.get('num_testimonials', 5)
+    testimonial_style = data.get('testimonial_style', 'Authentic')
+    
+    if not product:
+        return jsonify({'error': 'Product required'}), 400
+    
+    try:
+        result = functionality_29_generate_testimonials(product, customer_type, num_testimonials, testimonial_style)
+        return jsonify({'testimonials': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 7860))
     app.run(host='0.0.0.0', port=port, debug=False)
