@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Email Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📧 Enterprise Email Assistant</h1>
+            <p>AI-powered email composition, analysis, and optimization using Hugging Face models</p>
+            <div class="auth-section">
+                <span class="status-indicator {% if authenticated %}authenticated{% endif %}"></span>
+                <span id="auth-status">{% if authenticated %}Authenticated with Gmail{% else %}Not authenticated{% endif %}</span>
+                {% if not authenticated %}
+                <button class="auth-btn" onclick="loginWithGoogle()">Login with Google</button>
+                {% else %}
+                <button class="auth-btn logout" onclick="logout()">Logout</button>
+                {% endif %}
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="compose">✍️ Compose Email</button>
+            <button class="tab-btn" data-tab="sentiment">😊 Sentiment Analysis</button>
+            <button class="tab-btn" data-tab="summarize">📝 Summarize Email</button>
+            <button class="tab-btn" data-tab="abtest">🧪 A/B Testing</button>
+            <button class="tab-btn" data-tab="improve">🎯 Improve Tone</button>
+        </nav>
+
+        <main>
+            <!-- Compose Email Tab -->
+            <section id="compose" class="tab-content active">
+                <h2>Generate professional emails using AI</h2>
+                <div class="form-group">
+                    <label>Email Topic/Subject</label>
+                    <input type="text" id="compose-topic" placeholder="e.g., Project Update Q3">
+                </div>
+                <div class="form-group">
+                    <label>Recipient</label>
+                    <input type="text" id="compose-recipient" placeholder="e.g., John Smith">
+                </div>
+                <div class="form-group">
+                    <label>Tone</label>
+                    <select id="compose-tone">
+                        <option value="Professional">Professional</option>
+                        <option value="Friendly">Friendly</option>
+                        <option value="Formal">Formal</option>
+                        <option value="Casual">Casual</option>
+                        <option value="Persuasive">Persuasive</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Key Points (comma separated)</label>
+                    <textarea id="compose-keypoints" rows="3" placeholder="e.g., Project completed on time, under budget, ready for review"></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="composeEmail()">Generate Email</button>
+                <div class="form-group">
+                    <label>Generated Email</label>
+                    <textarea id="compose-result" rows="10" readonly></textarea>
+                </div>
+            </section>
+
+            <!-- Sentiment Analysis Tab -->
+            <section id="sentiment" class="tab-content">
+                <h2>Analyze the emotional tone of your emails</h2>
+                <div class="form-group">
+                    <label>Email Text</label>
+                    <textarea id="sentiment-text" rows="8" placeholder="Paste your email here..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="analyzeSentiment()">Analyze Sentiment</button>
+                <div class="result-row">
+                    <div class="form-group">
+                        <label>Sentiment</label>
+                        <input type="text" id="sentiment-result" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Confidence Score</label>
+                        <input type="text" id="sentiment-confidence" readonly>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Summarize Email Tab -->
+            <section id="summarize" class="tab-content">
+                <h2>Get concise summaries of long email threads</h2>
+                <div class="form-group">
+                    <label>Long Email Text</label>
+                    <textarea id="summarize-text" rows="12" placeholder="Paste long email or thread here..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="summarizeEmail()">Summarize</button>
+                <div class="form-group">
+                    <label>Summary</label>
+                    <textarea id="summarize-result" rows="4" readonly></textarea>
+                </div>
+            </section>
+
+            <!-- A/B Testing Tab -->
+            <section id="abtest" class="tab-content">
+                <h2>Generate two email variants to test performance</h2>
+                <div class="form-group">
+                    <label>Email Topic/Subject</label>
+                    <input type="text" id="ab-topic" placeholder="e.g., Product Launch Announcement">
+                </div>
+                <div class="form-group">
+                    <label>Recipient Type</label>
+                    <input type="text" id="ab-recipient" placeholder="e.g., Enterprise Customers">
+                </div>
+                <div class="form-group">
+                    <label>Key Points</label>
+                    <textarea id="ab-keypoints" rows="3" placeholder="e.g., New features, pricing, availability"></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="abTestEmail()">Generate A/B Variants</button>
+                <div class="result-row">
+                    <div class="form-group">
+                        <label>Variant A (Professional)</label>
+                        <textarea id="ab-variant-a" rows="8" readonly></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Variant B (Conversational)</label>
+                        <textarea id="ab-variant-b" rows="8" readonly></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Improve Tone Tab -->
+            <section id="improve" class="tab-content">
+                <h2>Rewrite emails with different tones</h2>
+                <div class="form-group">
+                    <label>Original Email</label>
+                    <textarea id="improve-text" rows="8"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Target Tone</label>
+                    <select id="improve-tone">
+                        <option value="More Professional">More Professional</option>
+                        <option value="More Friendly">More Friendly</option>
+                        <option value="More Formal">More Formal</option>
+                        <option value="More Persuasive">More Persuasive</option>
+                        <option value="More Concise">More Concise</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="improveTone()">Improve Tone</button>
+                <div class="form-group">
+                    <label>Improved Email</label>
+                    <textarea id="improve-result" rows="8" readonly></textarea>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
