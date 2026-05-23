@@ -227,3 +227,23 @@ async function analyzeLead() {
     
     document.getElementById('analyze-result').value = result.analysis;
 }
+
+// Appraise Repo
+async function appraiseRepo() {
+    const repoUrl = document.getElementById('appraise-url').value;
+    
+    if (!repoUrl) {
+        alert('Please provide a GitHub repository URL.');
+        return;
+    }
+    
+    const result = await callAPI('/api/appraise-repo', {
+        repo_url: repoUrl
+    });
+    
+    document.getElementById('appraise-stars').value = result.stars;
+    document.getElementById('appraise-forks').value = result.forks;
+    document.getElementById('appraise-engagement').value = result.engagement_score;
+    document.getElementById('appraise-value').value = result.value_score;
+    document.getElementById('appraise-result').value = result.ai_appraisal;
+}

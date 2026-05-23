@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 from transformers import pipeline
 import re
 import os
+import requests
 from dotenv import load_dotenv
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
@@ -302,6 +303,96 @@ def analyze_lead():
         return jsonify({'analysis': analysis if analysis else "Could not generate analysis."})
     except Exception as e:
         return jsonify({'error': f"Error: {str(e)}"}), 500
+
+@app.route('/api/appraise-repo', methods=['POST'])
+def appraise_repo():
+    """Appraise a GitHub repository."""
+    data = request.json
+    repo_url = data.get('repo_url', '')
+    
+    if not repo_url:
+        return jsonify({'error': 'Please provide a GitHub repository URL.'}), 400
+    
+    # Extract owner and repo from URL
+    match = re.match(r'https?://github\.com/([^/]+)/([^/]+)', repo_url)
+    if not match:
+        return jsonify({'error': 'Invalid GitHub repository URL.'}), 400
+    
+    owner, repo = match.groups()
+    
+    try:
+        # Fetch repo data from GitHub API
+        headers = {}
+        if GITHUB_TOKEN:
+            headers['Authorization'] = f'token {GITHUB_TOKEN}'
+        
+        repo_response = requests.get(f'https://api.github.com/repos/{owner}/{repo}', headers=headers)
+        if repo_response.status_code != 200:
+            return jsonify({'error': f'Failed to fetch repository: {repo_response.status_code}'}), 400
+        
+        repo_data = repo_response.json()
+        
+        # Fetch additional data
+        languages_response = requests.get(f'https://api.github.com/repos/{owner}/{repo}/languages', headers=headers)
+        languages = languages_response.json() if languages_response.status_code == 200 else {}
+        
+        contributors_response = requests.get(f'https://api.github.com/repos/{owner}/{repo}/contributors?per_page=10', headers=headers)
+        contributors = contributors_response.json() if contributors_response.status_code == 200 else []
+        
+        # Calculate appraisal metrics
+        stars = repo_data.get('stargazers_count', 0)
+        forks = repo_data.get('forks_count', 0)
+        watchers = repo_data.get('watchers_count', 0)
+        open_issues = repo_data.get('open_issues_count', 0)
+        size = repo_data.get('size', 0)
+        
+        # Calculate engagement score
+        engagement_score = (stars * 5) + (forks * 3) + (watchers * 2) - (open_issues * 1)
+        engagement_score = max(0, engagement_score)
+        
+        # Calculate activity score based on recent commits
+        activity_score = min(100, (len(contributors) * 10) + (open_issues * 2))
+        
+        # Calculate technical quality score
+        tech_score = min(100, (len(languages) * 15) + (size / 1000))
+        
+        # Calculate overall value score
+        value_score = (engagement_score * 0.4) + (activity_score * 0.3) + (tech_score * 0.3)
+        
+        # Generate AI appraisal
+        repo_info = f"""
+        Repository: {repo_data.get('full_name')}
+        Description: {repo_data.get('description', 'N/A')}
+        Stars: {stars}
+        Forks: {forks}
+        Open Issues: {open_issues}
+        Languages: {', '.join(languages.keys())}
+        Contributors: {len(contributors)}
+        Created: {repo_data.get('created_at')}
+        Updated: {repo_data.get('updated_at')}
+        """
+        
+        prompt = f"Appraise this GitHub repository for business value:\n{repo_info}\n\nProvide:\n1. Technical quality assessment\n2. Market potential\n3. Maintenance effort estimate\n4. Recommended use cases\n5. Estimated development cost to replicate\n\nAppraisal:"
+        
+        result = composer(prompt, max_length=500, num_return_sequences=1, temperature=0.6)
+        ai_appraisal = result[0]['generated_text'].split("Appraisal:")[-1].strip()
+        
+        return jsonify({
+            'repo_name': repo_data.get('full_name'),
+            'description': repo_data.get('description'),
+            'stars': stars,
+            'forks': forks,
+            'open_issues': open_issues,
+            'languages': languages,
+            'contributors_count': len(contributors),
+            'engagement_score': round(engagement_score, 2),
+            'activity_score': round(activity_score, 2),
+            'tech_score': round(tech_score, 2),
+            'value_score': round(value_score, 2),
+            'ai_appraisal': ai_appraisal if ai_appraisal else "Could not generate AI appraisal."
+        })
+    except Exception as e:
+        return jsonify({'error': f"Error appraising repository: {str(e)}"}), 500
 
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 7860))

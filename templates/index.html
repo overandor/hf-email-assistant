@@ -31,6 +31,7 @@
             <button class="tab-btn" data-tab="research">🔍 Research Lead</button>
             <button class="tab-btn" data-tab="batch">📬 Batch Outreach</button>
             <button class="tab-btn" data-tab="analyze">📊 Analyze Lead</button>
+            <button class="tab-btn" data-tab="appraise">💎 Appraise Repo</button>
         </nav>
 
         <main>
@@ -207,6 +208,40 @@
                 <div class="form-group">
                     <label>Outreach Strategy Analysis</label>
                     <textarea id="analyze-result" rows="10" readonly></textarea>
+                </div>
+            </section>
+
+            <!-- Appraise Repo Tab -->
+            <section id="appraise" class="tab-content">
+                <h2>Appraise GitHub repository for business value</h2>
+                <div class="form-group">
+                    <label>Repository URL</label>
+                    <input type="text" id="appraise-url" placeholder="e.g., https://github.com/owner/repo">
+                </div>
+                <button class="btn btn-primary" onclick="appraiseRepo()">Appraise Repository</button>
+                <div class="result-row">
+                    <div class="form-group">
+                        <label>Stars</label>
+                        <input type="text" id="appraise-stars" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Forks</label>
+                        <input type="text" id="appraise-forks" readonly>
+                    </div>
+                </div>
+                <div class="result-row">
+                    <div class="form-group">
+                        <label>Engagement Score</label>
+                        <input type="text" id="appraise-engagement" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Value Score</label>
+                        <input type="text" id="appraise-value" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>AI Appraisal</label>
+                    <textarea id="appraise-result" rows="10" readonly></textarea>
                 </div>
             </section>
         </main>
